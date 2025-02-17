@@ -92,6 +92,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1112118255791755326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389944641015372102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daba52e7a3719e546a9ed63fe9b0cc1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+--- !u!114 &5991877094984027130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389944641015372102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48585ae9fc3051c40a68c4081cc2cd9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firePoint: {fileID: 2615072305237097074}
+  projectilePrefabs:
+  - {fileID: 3790772120161125982, guid: fb2bfc599621b0449936a8a62e241ffa, type: 3}
+  - {fileID: 3237325837998852434, guid: 15246cece19f2ec4f925473e21732d24, type: 3}
+  selectedProjectileIndex: 0
+  fireRate: 0.1
 --- !u!60 &5694800732678125286
 PolygonCollider2D:
   m_ObjectHideFlags: 0

@@ -148,10 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40cdf707f2b118746aa296bdfce94ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 2480923425930494243, guid: 6902cc74d72de2a459e5796b8b135a2e, type: 3}
-  bulletPrefab: {fileID: 3790772120161125982, guid: fb2bfc599621b0449936a8a62e241ffa, type: 3}
+  player: {fileID: 0}
   moveSpeed: 2
-  detectionRange: 10
+  detectionRange: 20
   fireRate: 1.5
 --- !u!60 &5915206149778616808
 PolygonCollider2D:
