@@ -31,7 +31,12 @@ public class PlayerShooting : MonoBehaviour
     {
         if (projectilePrefabs.Length > 0 && selectedProjectileIndex < projectilePrefabs.Length)
         {
-            Instantiate(projectilePrefabs[selectedProjectileIndex], firePoint.position, firePoint.rotation);
+            GameObject projectile = Instantiate(projectilePrefabs[selectedProjectileIndex], firePoint.position, firePoint.rotation);
+            Projectile projectileScript = projectile.GetComponent<Projectile>();
+            if (projectileScript != null)
+            {
+                projectileScript.SetShooter(gameObject); // Set shooter as the player
+            }
         }
     }
 }

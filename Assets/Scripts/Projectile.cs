@@ -4,21 +4,25 @@ public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
     public int damage = 10;
-    public float maxTravelDistance = 20f; // Distance before destruction
-
+    public float maxTravelDistance = 20f;
+    
     private Vector3 startPosition;
+    private GameObject shooter; // Store the shooter
+
+    public void SetShooter(GameObject shooter)
+    {
+        this.shooter = shooter;
+    }
 
     void Start()
-{
-    Physics2D.IgnoreCollision(GetComponent<Collider2D>(), GameObject.FindGameObjectWithTag("Player").GetComponent<Collider2D>());
-}
-
+    {
+        startPosition = transform.position;
+    }
 
     void Update()
     {
         transform.position += transform.right * speed * Time.deltaTime;
 
-        // Destroy the projectile if it travels too far
         if (Vector3.Distance(startPosition, transform.position) >= maxTravelDistance)
         {
             Destroy(gameObject);
@@ -26,27 +30,32 @@ public class Projectile : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.CompareTag("Enemy"))
     {
-        Enemy enemy = other.GetComponent<Enemy>();
-        if (enemy != null)
+        if (shooter == null) // Check if shooter was destroyed
         {
-            enemy.TakeDamage(damage);
             Destroy(gameObject);
+            return;
+        }
+        if (other.gameObject == shooter) return; // Ignore collision with shooter
+
+        if (other.CompareTag("Enemy") && shooter.CompareTag("Player"))
+        {
+            Enemy enemy = other.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+                Destroy(gameObject);
+            }
+        }
+        
+        if (other.CompareTag("Player") && shooter.CompareTag("Enemy"))
+        {
+            Player player = other.GetComponent<Player>();
+            if (player != null)
+            {
+                player.TakeDamage(damage);
+                Destroy(gameObject);
+            }
         }
     }
-    
-    if (other.CompareTag("Player"))
-    {
-        Player player = other.GetComponent<Player>();
-        if (player != null)
-        {
-            player.TakeDamage(damage);
-            Destroy(gameObject);
-        }
-    }
-}
-
-
 }

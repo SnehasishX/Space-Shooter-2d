@@ -18,6 +18,11 @@ public class EnemyShooting : MonoBehaviour
 
     void Shoot()
     {
-        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        Projectile projectileScript = projectile.GetComponent<Projectile>();
+        if (projectileScript != null)
+        {
+            projectileScript.SetShooter(gameObject); // Set shooter as the enemy
+        }
     }
 }
