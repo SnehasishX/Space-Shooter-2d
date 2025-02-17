@@ -256,6 +256,7 @@ GameObject:
   - component: {fileID: 3751640212544042329}
   - component: {fileID: -6343314110855497037}
   - component: {fileID: 5195183811480567592}
+  - component: {fileID: 2014913277757830553}
   m_Layer: 0
   m_Name: HomingMissile
   m_TagString: Untagged
@@ -364,3 +365,15 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
+--- !u!114 &2014913277757830553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3790772120161125982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69cf4760b429c94409140b72193f7c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
