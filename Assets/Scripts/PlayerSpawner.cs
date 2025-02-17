@@ -1,18 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerSpawner : MonoBehaviour
+public class PlayerSpawner : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject playerPrefab; // Assign in Inspector
+
+    public override void OnNetworkSpawn()
     {
-        
+        if (IsServer)
+        {
+            SpawnPlayer(OwnerClientId);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    void SpawnPlayer(ulong clientId)
     {
-        
+        GameObject player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
     }
 }
