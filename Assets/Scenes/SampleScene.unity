@@ -600,7 +600,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 5873576491824438303, guid: 94dd603bbdadd2c4b85e63afe939e0dd, type: 3}
   player: {fileID: 1387622851}
   spawnRadius: 10
-  spawnDelay: 10
+  spawnDelay: 1
   maxEnemies: 2
 --- !u!4 &215521606
 Transform:
@@ -679,7 +679,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.69
+  orthographic size: 10.9
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

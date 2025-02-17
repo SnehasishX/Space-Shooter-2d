@@ -377,3 +377,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69cf4760b429c94409140b72193f7c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 2327883175067992939, guid: 94dd603bbdadd2c4b85e63afe939e0dd, type: 3}
+  speed: 10
+  rotationSpeed: 200
+  maxLifetime: 5
+  trackingDistance: 15

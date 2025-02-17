@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -22,9 +21,12 @@ public class EnemySpawner : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(spawnDelay); // Use spawnDelay instead of hardcoded value
 
             if (player == null) yield break;
+
+            // Clean up any destroyed enemies (if any)
+            activeEnemies.RemoveAll(enemy => enemy == null);
 
             // Check if we have reached the limit
             if (activeEnemies.Count >= maxEnemies)
@@ -32,6 +34,7 @@ public class EnemySpawner : MonoBehaviour
                 yield return null; // Wait without spawning
                 continue;
             }
+
             Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
             Vector3 spawnPosition = new Vector3(player.position.x + randomOffset.x, player.position.y + randomOffset.y, 0);
         
