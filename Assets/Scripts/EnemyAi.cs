@@ -2,37 +2,67 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    public Transform player; // Reference to the player's transform
-    public float moveSpeed = 2f; // Speed of enemy movement
-    public float detectionRange = 10f; // Range at which enemy detects the player
+    public Transform player; // Player reference
+    // public GameObject bulletPrefab;
+    // public Transform firePoint;
+    public float moveSpeed = 2f;
+    public float detectionRange = 10f;
+    public float fireRate = 1.5f;
+    private float nextFireTime;
+
+    void Start()
+    {
+        FindPlayer(); // Ensure we have the player reference
+    }
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null)
+        {
+            FindPlayer(); // Try finding the player again if null
+            return;
+        }
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        // Check if player is within detection range
         if (distanceToPlayer <= detectionRange)
         {
             FollowPlayer();
             RotateTowardsPlayer();
+
+            if (Time.time >= nextFireTime)
+            {
+                // ShootPlayer();
+                nextFireTime = Time.time + fireRate;
+            }
         }
     }
 
     void FollowPlayer()
     {
-        // Move towards the player
         transform.position = Vector2.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
     }
 
     void RotateTowardsPlayer()
     {
-        // Get direction to player
         Vector3 direction = player.position - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        
-        // Rotate enemy to face the player
         transform.rotation = Quaternion.Euler(0, 0, angle+180);
     }
+
+    // void ShootPlayer()
+    // {
+    //     Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+    // }
+
+    public void FindPlayer()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+    }
+
+    
 }

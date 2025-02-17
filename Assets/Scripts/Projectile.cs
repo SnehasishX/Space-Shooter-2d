@@ -36,7 +36,8 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    else if (other.CompareTag("Player"))
+    
+    if (other.CompareTag("Player"))
     {
         Player player = other.GetComponent<Player>();
         if (player != null)

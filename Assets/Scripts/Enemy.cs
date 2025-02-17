@@ -2,54 +2,34 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public int maxHealth = 50; // Add this line
+    public int maxHealth = 50;
     private int health;
-
-    public GameObject damageTextPrefab;
 
     void Start()
     {
-        health = maxHealth; // Set health to max at start
+        health = maxHealth;
     }
 
     public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
 {
-    health -= damage;
-
-    // ✅ Check if the prefab exists before using it
-    if (damageTextPrefab != null)
+    if (UIManager.Instance != null)
     {
-        GameObject dmgText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity);
-
-        // ✅ Check if FloatingDamage component exists
-        FloatingDamage floatingText = dmgText.GetComponent<FloatingDamage>();
-        if (floatingText != null)
-        {
-            floatingText.SetDamageText(damage);
-        }
-        else
-        {
-            Debug.LogError("FloatingDamage component is missing on damageTextPrefab!");
-        }
+        UIManager.Instance.UpdateScore(10);
     }
-    else
+    
+    // Inform spawner to remove this enemy from the list
+    EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
+    if (spawner != null)
     {
-        Debug.LogError("damageTextPrefab is not assigned in the Inspector!");
+        spawner.RemoveEnemy(gameObject);
     }
 
-    if (health <= 0)
-    {
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.UpdateScore(10);
-        }
-        else
-        {
-            Debug.LogError("UIManager instance is NULL!");
-        }
-
-        Destroy(gameObject);
-    }
+    Destroy(gameObject);
 }
 
+    }
 }
