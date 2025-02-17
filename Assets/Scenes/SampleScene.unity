@@ -601,7 +601,7 @@ MonoBehaviour:
   player: {fileID: 1387622851}
   spawnRadius: 10
   spawnDelay: 1
-  maxEnemies: 2
+  maxEnemies: 20
 --- !u!4 &215521606
 Transform:
   m_ObjectHideFlags: 0

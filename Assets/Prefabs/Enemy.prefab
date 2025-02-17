@@ -41,10 +41,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2327883175067992939}
   - component: {fileID: 5248786433965749586}
-  - component: {fileID: 44428414266203659}
-  - component: {fileID: 4150644058582134467}
   - component: {fileID: 5915206149778616808}
   - component: {fileID: 6617898105771621196}
+  - component: {fileID: 44428414266203659}
+  - component: {fileID: 4150644058582134467}
   - component: {fileID: 8108461320710240405}
   m_Layer: 0
   m_Name: Enemy
@@ -121,37 +121,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &44428414266203659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5873576491824438303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 477f2bc4fbfd26340afb117c62b7c06b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firePoint: {fileID: 2215546016829802767}
-  projectilePrefab: {fileID: 3790772120161125982, guid: fb2bfc599621b0449936a8a62e241ffa, type: 3}
-  fireRate: 1.5
---- !u!114 &4150644058582134467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5873576491824438303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40cdf707f2b118746aa296bdfce94ac9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  moveSpeed: 2
-  detectionRange: 20
-  fireRate: 1.5
 --- !u!60 &5915206149778616808
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -325,6 +294,37 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &44428414266203659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5873576491824438303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 477f2bc4fbfd26340afb117c62b7c06b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firePoint: {fileID: 2215546016829802767}
+  projectilePrefab: {fileID: 3790772120161125982, guid: fb2bfc599621b0449936a8a62e241ffa, type: 3}
+  fireRate: 1.5
+--- !u!114 &4150644058582134467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5873576491824438303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40cdf707f2b118746aa296bdfce94ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  moveSpeed: 2
+  detectionRange: 20
+  fireRate: 1.5
 --- !u!114 &8108461320710240405
 MonoBehaviour:
   m_ObjectHideFlags: 0
