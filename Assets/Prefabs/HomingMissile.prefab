@@ -5026,4 +5026,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   damage: 50
-  maxTravelDistance: 100
+  maxTravelDistance: 70
+  explosionEffectPrefab: {fileID: 0}
