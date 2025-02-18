@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2254332017840676916}
   - component: {fileID: 5026684591838203347}
   - component: {fileID: 3322087336702576227}
-  - component: {fileID: 51686929975952944}
   - component: {fileID: -1387623097049023674}
+  - component: {fileID: 51686929975952944}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -114,21 +114,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &51686929975952944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8579762087676271010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bdf06371dfb3454a89b7573186b48c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  damage: 20
-  maxTravelDistance: 10
 --- !u!58 &-1387623097049023674
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -164,3 +149,18 @@ CircleCollider2D:
   m_Offset: {x: -0.007441911, y: -0.04465038}
   serializedVersion: 2
   m_Radius: 1.787436
+--- !u!114 &51686929975952944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8579762087676271010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bdf06371dfb3454a89b7573186b48c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  damage: 20
+  maxTravelDistance: 10

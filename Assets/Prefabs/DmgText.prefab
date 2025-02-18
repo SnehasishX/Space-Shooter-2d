@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2310165049366644607}
   - component: {fileID: 817397275442653719}
   m_Layer: 0
-  m_Name: Dmg
+  m_Name: DmgText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4278201343
-  m_fontColor: {r: 1, g: 0.17015399, b: 0, a: 1}
+  m_fontColor: {r: 1, g: 0.6443301, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

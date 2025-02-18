@@ -1118,6 +1118,10 @@ PrefabInstance:
       propertyPath: selectedProjectileIndex
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5991877094984027130, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
+      propertyPath: projectilePrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1755453322711353629, guid: 348aed46013785f4cb1b90af566a2569, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
