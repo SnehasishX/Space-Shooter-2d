@@ -2,19 +2,15 @@ using UnityEngine;
 
 public class HomingMissile : MonoBehaviour
 {
-    public Transform target;           // Target to track
-    public float speed = 10f;          // Speed of the missile
-    public float rotationSpeed = 200f; // How fast it turns
-    public float maxLifetime = 5f;     // Time before self-destruction
-    public float trackingDistance = 15f; // Max tracking range
+    public float rotationSpeed = 200f;
+    public float trackingDistance = 15f;
 
-    private bool isTracking = true;    // Whether the missile is tracking
-    private float startTime;           // Time when missile was spawned
-    private float lastDistance;        // Store last frame's distance
+    public Transform target;
+    private bool isTracking = true;
+    private float lastDistance;
 
     void Start()
     {
-        startTime = Time.time;
         FindClosestTarget();
     }
 
@@ -22,13 +18,12 @@ public class HomingMissile : MonoBehaviour
     {
         if (target == null)
         {
-            MoveStraight(); // No target found, move straight
+            MoveStraight();
         }
         else
         {
             float currentDistance = Vector2.Distance(transform.position, target.position);
 
-            // Switch tracking off if missile is moving away from the target
             if (currentDistance > lastDistance)
             {
                 isTracking = false;
@@ -45,30 +40,24 @@ public class HomingMissile : MonoBehaviour
                 MoveStraight();
             }
         }
-
-        // Destroy after max lifetime
-        if (Time.time - startTime > maxLifetime)
-        {
-            Destroy(gameObject);
-        }
     }
 
-    void TrackTarget()
+    private void MoveStraight()
+    {
+        transform.position += transform.right * Time.deltaTime; // Speed should be assigned externally
+    }
+
+    private void TrackTarget()
     {
         Vector2 direction = (target.position - transform.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-        transform.position += transform.right * speed * Time.deltaTime;
+        transform.position += transform.right * Time.deltaTime; // Speed should be assigned externally
     }
 
-    void MoveStraight()
-    {
-        transform.position += transform.right * speed * Time.deltaTime;
-    }
-
-    void FindClosestTarget()
+    private void FindClosestTarget()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float shortestDistance = trackingDistance;
@@ -88,15 +77,6 @@ public class HomingMissile : MonoBehaviour
         {
             target = closestEnemy.transform;
             lastDistance = Vector2.Distance(transform.position, target.position);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            Destroy(other.gameObject); // Destroy enemy
-            Destroy(gameObject); // Destroy missile
         }
     }
 }
