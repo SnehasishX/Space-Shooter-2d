@@ -3,18 +3,18 @@ using TMPro;
 
 public class FloatingDamage : MonoBehaviour
 {
-    private TextMeshProUGUI damageText; // Private reference to prevent missing assignment errors
+    private TextMeshPro damageText; // Change to TextMeshPro for World Space
     public float moveSpeed = 1f;
     public float fadeSpeed = 1f;
+    public Vector3 moveDirection = new Vector3(0, 1, 0); // Moves upwards
 
-    private void Awake()
+    void Awake()
     {
-        // Automatically find TextMeshPro component attached to this GameObject
-        damageText = GetComponent<TextMeshProUGUI>();
-
+        // Get TextMeshPro Component (World Space Text)
+        damageText = GetComponent<TextMeshPro>();
         if (damageText == null)
         {
-            Debug.LogError("No TextMeshPro component found on FloatingDamage! Make sure the FloatingDamage prefab has a TextMeshProUGUI component.");
+            Debug.LogError("No TextMeshPro found on FloatingDamage! Make sure it's attached.");
         }
     }
 
@@ -28,18 +28,16 @@ public class FloatingDamage : MonoBehaviour
 
     void Update()
     {
-        if (damageText == null) return; // Prevents errors if TextMeshPro is missing
+        if (damageText == null) return;
 
-        // Move the text upwards
-        transform.position += new Vector3(0, moveSpeed * Time.deltaTime, 0);
+        // Move the text upwards smoothly
+        transform.position += moveDirection * moveSpeed * Time.deltaTime;
 
         // Fade out the text
-        Color color = damageText.color;
-        color.a -= fadeSpeed * Time.deltaTime;
-        damageText.color = color;
+        damageText.alpha -= fadeSpeed * Time.deltaTime;
 
         // Destroy when fully faded
-        if (color.a <= 0)
+        if (damageText.alpha <= 0)
         {
             Destroy(gameObject);
         }

@@ -338,3 +338,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  floatingDamagePrefab: {fileID: 5836072611034975066, guid: a16971a40a1b74741b8e32a12eb70879, type: 3}
