@@ -600,8 +600,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 5873576491824438303, guid: 94dd603bbdadd2c4b85e63afe939e0dd, type: 3}
   player: {fileID: 1387622851}
   spawnRadius: 10
-  spawnDelay: 1
-  maxEnemies: 20
+  spawnDelay: 2
+  maxEnemies: 10
 --- !u!4 &215521606
 Transform:
   m_ObjectHideFlags: 0
@@ -1108,6 +1108,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2480923425930494243, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5991877094984027130, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
+      propertyPath: fireRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5991877094984027130, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
+      propertyPath: selectedProjectileIndex
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
