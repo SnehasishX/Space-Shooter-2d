@@ -1,10 +1,9 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviourPun
 {
-    public Transform player; // Player reference
-    // public GameObject bulletPrefab;
-    // public Transform firePoint;
+    public Transform player; 
     public float moveSpeed = 2f;
     public float detectionRange = 10f;
     public float fireRate = 1.5f;
@@ -12,14 +11,19 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
-        FindPlayer(); // Ensure we have the player reference
+        if (PhotonNetwork.IsMasterClient) // Only Master Client controls enemy movement
+        {
+            FindPlayer();
+        }
     }
 
     void Update()
     {
+        if (!PhotonNetwork.IsMasterClient) return; // Only the Master Client updates AI
+
         if (player == null)
         {
-            FindPlayer(); // Try finding the player again if null
+            FindPlayer();
             return;
         }
 
@@ -29,12 +33,6 @@ public class EnemyAI : MonoBehaviour
         {
             FollowPlayer();
             RotateTowardsPlayer();
-
-            if (Time.time >= nextFireTime)
-            {
-                // ShootPlayer();
-                nextFireTime = Time.time + fireRate;
-            }
         }
     }
 
@@ -47,22 +45,15 @@ public class EnemyAI : MonoBehaviour
     {
         Vector3 direction = player.position - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle+180);
+        transform.rotation = Quaternion.Euler(0, 0, angle + 180);
     }
-
-    // void ShootPlayer()
-    // {
-    //     Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-    // }
 
     public void FindPlayer()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length > 0)
         {
-            player = playerObj.transform;
+            player = players[Random.Range(0, players.Length)].transform; // Pick a random player in multiplayer
         }
     }
-
-    
 }

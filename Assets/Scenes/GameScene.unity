@@ -584,7 +584,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &215521605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,7 +598,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 5873576491824438303, guid: 94dd603bbdadd2c4b85e63afe939e0dd, type: 3}
-  player: {fileID: 9055163481058430853, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
   spawnRadius: 10
   spawnDelay: 2
   maxEnemies: 10
@@ -750,7 +749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 285ac4869d998804da7aa86af23b3ad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 389944641015372102, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
+  playerPrefab: {fileID: 8693226695641701513, guid: c07d2a7a38cdd724ab59fd56a1d05bee, type: 3}
 --- !u!4 &1079467035
 Transform:
   m_ObjectHideFlags: 0

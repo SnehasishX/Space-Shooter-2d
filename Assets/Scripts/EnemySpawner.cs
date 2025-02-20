@@ -1,64 +1,48 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviourPun
 {
     public GameObject enemyPrefab;
-    public Transform player;
     public float spawnRadius = 10f;
     public float spawnDelay = 2f;
     public int maxEnemies = 10; // Maximum enemies allowed at a time
 
-    private List<GameObject> activeEnemies = new List<GameObject>(); // List to track enemies
+    private List<GameObject> activeEnemies = new List<GameObject>();
 
     void Start()
     {
-        StartCoroutine(SpawnEnemies());
+        if (PhotonNetwork.IsMasterClient) // Only Master Client spawns enemies
+        {
+            StartCoroutine(SpawnEnemies());
+        }
     }
 
     IEnumerator SpawnEnemies()
     {
         while (true)
         {
-            yield return new WaitForSeconds(spawnDelay); // Use spawnDelay instead of hardcoded value
+            yield return new WaitForSeconds(spawnDelay);
 
-            if (player == null) yield break;
-
-            // Clean up any destroyed enemies (if any)
+            // Clean up any destroyed enemies
             activeEnemies.RemoveAll(enemy => enemy == null);
 
-            // Check if we have reached the limit
-            if (activeEnemies.Count >= maxEnemies)
-            {
-                yield return null; // Wait without spawning
-                continue;
-            }
+            // Check enemy limit
+            if (activeEnemies.Count >= maxEnemies) continue;
 
+            // Pick a random player as the target
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            if (players.Length == 0) continue;
+
+            Transform targetPlayer = players[Random.Range(0, players.Length)].transform;
             Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPosition = new Vector3(player.position.x + randomOffset.x, player.position.y + randomOffset.y, 0);
-        
-            GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            activeEnemies.Add(enemy); // Track the enemy
-        
-            EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-            if (enemyAI != null)
-            {
-                enemyAI.enabled = false; // Temporarily disable AI
-            }
+            Vector3 spawnPosition = new Vector3(targetPlayer.position.x + randomOffset.x, targetPlayer.position.y + randomOffset.y, 0);
 
-            StartCoroutine(ActivateEnemy(enemy, enemyAI));
-        }
-    }
-
-    IEnumerator ActivateEnemy(GameObject enemy, EnemyAI enemyAI)
-    {
-        yield return new WaitForSeconds(Random.Range(2f, 3f));
-
-        if (enemy != null && enemyAI != null)
-        {
-            enemyAI.enabled = true;
-            enemyAI.FindPlayer();
+            // Spawn enemy across the network
+            GameObject enemy = PhotonNetwork.Instantiate(enemyPrefab.name, spawnPosition, Quaternion.identity);
+            activeEnemies.Add(enemy);
         }
     }
 

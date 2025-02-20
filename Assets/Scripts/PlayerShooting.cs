@@ -1,23 +1,25 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class PlayerShooting : MonoBehaviour
+public class PlayerShooting : MonoBehaviourPun
 {
-    public Transform firePoint; // The point from where the projectile is fired
-    public GameObject[] projectilePrefabs; // Array of different projectiles
-    public int selectedProjectileIndex = 0; // The current projectile type
+    public Transform firePoint;
+    public GameObject[] projectilePrefabs;
+    public int selectedProjectileIndex = 0;
 
     public float fireRate = 0.5f;
     private float nextFireTime = 0f;
 
     void Update()
     {
+        if (!photonView.IsMine) return; // Only the local player can shoot
+
         if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
-            Shoot();
+            Shoot(); // Only the local player instantiates the bullet
             nextFireTime = Time.time + fireRate;
         }
 
-        // Switch projectile type with number keys (1,2,3,4...)
         for (int i = 0; i < projectilePrefabs.Length; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
@@ -31,11 +33,13 @@ public class PlayerShooting : MonoBehaviour
     {
         if (projectilePrefabs.Length > 0 && selectedProjectileIndex < projectilePrefabs.Length)
         {
-            GameObject projectile = Instantiate(projectilePrefabs[selectedProjectileIndex], firePoint.position, firePoint.rotation);
+            // Only the shooter instantiates the bullet, and it is automatically synced
+            GameObject projectile = PhotonNetwork.Instantiate(projectilePrefabs[selectedProjectileIndex].name, firePoint.position, firePoint.rotation);
+            
             Projectile projectileScript = projectile.GetComponent<Projectile>();
             if (projectileScript != null)
             {
-                projectileScript.SetShooter(gameObject); // Set shooter as the player
+                projectileScript.SetShooter(gameObject);
             }
         }
     }

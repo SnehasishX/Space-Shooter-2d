@@ -1,41 +1,42 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviourPun
 {
     public int maxHealth = 50;
     private int health;
 
-    public GameObject floatingDamagePrefab; // Assign in Inspector
+    public GameObject floatingDamagePrefab;
 
     void Start()
     {
         health = maxHealth;
     }
 
+    [PunRPC] // Ensures damage syncs across the network
     public void TakeDamage(int damage)
     {
-        // Show floating damage
         ShowFloatingDamage(damage);
 
-        // Reduce health
         health -= damage;
 
-        // Check for death
         if (health <= 0)
         {
-            if (UIManager.Instance != null)
+            if (PhotonNetwork.IsMasterClient) // Only Master Client destroys the enemy
             {
-                UIManager.Instance.UpdateScore(10);
-            }
-            
-            // Inform spawner to remove this enemy from the list
-            EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
-            if (spawner != null)
-            {
-                spawner.RemoveEnemy(gameObject);
-            }
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.UpdateScore(10);
+                }
 
-            Destroy(gameObject);
+                EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
+                if (spawner != null)
+                {
+                    spawner.RemoveEnemy(gameObject);
+                }
+
+                PhotonNetwork.Destroy(gameObject); // Destroy enemy for all players
+            }
         }
     }
 
@@ -43,10 +44,7 @@ public class Enemy : MonoBehaviour
     {
         if (floatingDamagePrefab == null) return;
 
-        // Spawn floating damage at enemy position
         GameObject damageText = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity);
-
-        // Set damage text
         FloatingDamage floatingDamage = damageText.GetComponent<FloatingDamage>();
         if (floatingDamage != null)
         {
