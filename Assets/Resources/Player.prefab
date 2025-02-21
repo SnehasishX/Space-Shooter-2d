@@ -426,7 +426,6 @@ MonoBehaviour:
   - {fileID: 1755453322711353629, guid: 348aed46013785f4cb1b90af566a2569, type: 3}
   selectedProjectileIndex: 0
   fireRate: 0.1
-  FloatingDmg: {fileID: 5836072611034975066, guid: a16971a40a1b74741b8e32a12eb70879, type: 3}
 --- !u!114 &2901883119440831893
 MonoBehaviour:
   m_ObjectHideFlags: 0
