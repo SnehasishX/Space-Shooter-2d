@@ -8,6 +8,7 @@ TagManager:
   - Bullet
   - Crosshair
   - UI
+  - MiniCam
   layers:
   - Default
   - TransparentFX
