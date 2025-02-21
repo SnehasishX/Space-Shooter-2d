@@ -47,7 +47,7 @@ public class Projectile : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
-                ShowDamageText(other.transform.position, damage);
+                ShowDamageText(other.transform.position, damage, false); // 🔥 Enemy hit
             }
             DestroyProjectile();
         }
@@ -59,19 +59,35 @@ public class Projectile : MonoBehaviour
             if (playerView != null)
             {
                 playerView.RPC("RPC_TakeDamage", playerView.Owner, damage);
-                ShowDamageText(other.transform.position, damage);
+                ShowDamageText(other.transform.position, damage, true); // 🔥 Player hit
             }
             DestroyProjectile();
         }
     }
 
-    void ShowDamageText(Vector3 position, int damage)
+    void ShowDamageText(Vector3 position, int damage, bool isPlayer)
     {
-        if (UIManager.Instance != null)
+        if (UIManager.Instance != null && UIManager.Instance.photonView != null)
         {
-            UIManager.Instance.photonView.RPC("ShowDamageText", RpcTarget.All, position, damage);
+            string rpcMethod = isPlayer ? "ShowPlayerDamageText" : "ShowEnemyDamageText";
+
+            if (UIManager.Instance.GetType().GetMethod(rpcMethod) != null)
+            {
+                UIManager.Instance.photonView.RPC(rpcMethod, RpcTarget.All, position, damage);
+            }
+            else
+            {
+                Debug.LogError($"❌ {rpcMethod} RPC method is missing in UIManager!");
+            }
+        }
+        else
+        {
+            Debug.LogError("❌ UIManager instance or PhotonView is missing!");
         }
     }
+
+
+
 
     void DestroyProjectile()
     {

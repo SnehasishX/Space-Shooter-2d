@@ -9,18 +9,32 @@ public class UIManager : MonoBehaviourPun
 
     public TextMeshProUGUI scoreText;
     public Slider healthBar;
-    public GameObject floatingDamagePrefab; // ✅ Assign this in the Inspector
+    public GameObject floatingDamagePrefab;
 
     private int score = 0;
+    public bool showPlayerDamage = false; // ✅ Toggle for player damage display
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+
+            // Ensure PhotonView is assigned
+            if (photonView == null)
+            {
+                Debug.LogError("❌ PhotonView is missing from UIManager!");
+            }
+            else
+            {
+                Debug.Log($"✅ UIManager PhotonView ID: {photonView.ViewID}");
+            }
+
+            DontDestroyOnLoad(gameObject); // ✅ Keep UIManager persistent
         }
         else
         {
+            Debug.LogError("❌ Duplicate UIManager detected! Destroying...");
             Destroy(gameObject);
             return;
         }
@@ -38,7 +52,14 @@ public class UIManager : MonoBehaviourPun
 
     public void AddScore(int amount)
     {
-        photonView.RPC("UpdateScore", RpcTarget.All, amount);
+        if (photonView != null)
+        {
+            photonView.RPC("UpdateScore", RpcTarget.All, amount);
+        }
+        else
+        {
+            Debug.LogError("❌ UIManager PhotonView is missing!");
+        }
     }
 
     public void UpdateHealth(float currentHealth, float maxHealth)
@@ -50,7 +71,19 @@ public class UIManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void ShowDamageText(Vector3 position, int damage)
+    public void ShowEnemyDamageText(Vector3 position, int damage)
+    {
+        ShowFloatingDamage(position, damage);
+    }
+
+    [PunRPC]
+    public void ShowPlayerDamageText(Vector3 position, int damage)
+    {
+        if (!showPlayerDamage) return;
+        ShowFloatingDamage(position, damage);
+    }
+
+    private void ShowFloatingDamage(Vector3 position, int damage)
     {
         if (floatingDamagePrefab == null)
         {

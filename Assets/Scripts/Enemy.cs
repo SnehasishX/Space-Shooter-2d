@@ -24,7 +24,11 @@ public class Enemy : MonoBehaviourPun
 
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.photonView.RPC("ShowDamageText", RpcTarget.All, transform.position, damage);
+            UIManager.Instance.photonView.RPC("ShowEnemyDamageText", RpcTarget.All, transform.position, damage);
+        }
+        else
+        {
+            Debug.LogError("❌ UIManager instance not found!");
         }
 
         if (health <= 0)
@@ -33,4 +37,5 @@ public class Enemy : MonoBehaviourPun
             PhotonNetwork.Destroy(gameObject);
         }
     }
+
 }

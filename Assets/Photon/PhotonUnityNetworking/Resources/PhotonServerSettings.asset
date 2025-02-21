@@ -52,6 +52,10 @@ MonoBehaviour:
   - ReturnToMainMenu
   - ShowDamageText
   - UpdateScore
+  - RPC_PlayerDied
+  - RPC_TakeDamage
+  - ShowEnemyDamageText
+  - ShowPlayerDamageText
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
