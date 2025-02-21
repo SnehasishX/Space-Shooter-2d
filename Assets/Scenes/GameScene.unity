@@ -906,7 +906,7 @@ MonoBehaviour:
   scoreText: {fileID: 27276244}
   healthBar: {fileID: 1285673861}
   floatingDamagePrefab: {fileID: 5836072611034975066, guid: a16971a40a1b74741b8e32a12eb70879, type: 3}
-  showPlayerDamage: 0
+  showPlayerDamage: 1
 --- !u!4 &1183660238
 Transform:
   m_ObjectHideFlags: 0

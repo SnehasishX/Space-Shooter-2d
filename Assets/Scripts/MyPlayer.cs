@@ -2,7 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviourPunCallbacks, IPunObservable
+public class MyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 {
     public int maxHealth = 100;
     private int health;
@@ -41,6 +41,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (!photonView.IsMine) return;
 
+        // 🔥 Ensure MasterClient can destroy if needed
         photonView.RPC("RPC_PlayerDied", RpcTarget.AllBuffered, photonView.ViewID);
     }
 
@@ -48,8 +49,21 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void RPC_PlayerDied(int viewID)
     {
         PhotonView pv = PhotonView.Find(viewID);
-        if (pv != null) PhotonNetwork.Destroy(pv.gameObject);
+        if (pv != null)
+        {
+            if (pv.IsMine)
+            {
+                PhotonNetwork.Destroy(pv.gameObject);
+            }
+            else if (PhotonNetwork.IsMasterClient)
+            {
+                // ✅ Transfer ownership before destroying
+                pv.TransferOwnership(PhotonNetwork.LocalPlayer);
+                PhotonNetwork.Destroy(pv.gameObject);
+            }
+        }
 
+        // ✅ Ensure only the local player loads MainMenu
         if (photonView.IsMine)
         {
             SceneManager.LoadScene("MainMenu");

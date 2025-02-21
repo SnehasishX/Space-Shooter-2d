@@ -340,6 +340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   scoreValue: 10
+  speed: 2
 --- !u!114 &8594259485485099495
 MonoBehaviour:
   m_ObjectHideFlags: 0
