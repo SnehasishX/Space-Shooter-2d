@@ -6,7 +6,11 @@ public class Projectile : MonoBehaviour
     public float speed = 10f;
     public int damage = 10;
     public float maxTravelDistance = 20f;
+    public GameObject explosionEffectPrefab;
+
     private Vector3 startPosition;
+    private ParticleSystem particleSystem;
+    private Vector3 originalScale;
     public string shooterTag;
 
     public void SetShooterTag(string tag)
@@ -17,6 +21,12 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         startPosition = transform.position;
+        particleSystem = GetComponentInChildren<ParticleSystem>();
+
+        if (particleSystem != null)
+        {
+            originalScale = particleSystem.transform.localScale;
+        }
     }
 
     void Update()
@@ -25,7 +35,7 @@ public class Projectile : MonoBehaviour
 
         if (Vector3.Distance(startPosition, transform.position) >= maxTravelDistance)
         {
-            Destroy(gameObject);
+            DestroyProjectile();
         }
     }
 
@@ -37,9 +47,9 @@ public class Projectile : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+                ShowDamageText(other.transform.position, damage);
             }
-
-            Destroy(gameObject);
+            DestroyProjectile();
         }
 
         if (shooterTag == "Enemy" && other.CompareTag("Player"))
@@ -49,9 +59,35 @@ public class Projectile : MonoBehaviour
             if (playerView != null)
             {
                 playerView.RPC("RPC_TakeDamage", playerView.Owner, damage);
+                ShowDamageText(other.transform.position, damage);
             }
-
-            PhotonNetwork.Destroy(gameObject);
+            DestroyProjectile();
         }
+    }
+
+    void ShowDamageText(Vector3 position, int damage)
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.photonView.RPC("ShowDamageText", RpcTarget.All, position, damage);
+        }
+    }
+
+    void DestroyProjectile()
+    {
+        if (particleSystem != null)
+        {
+            particleSystem.transform.parent = null;
+            particleSystem.transform.localScale = originalScale;
+            particleSystem.Stop();
+            Destroy(particleSystem.gameObject, particleSystem.main.duration);
+        }
+
+        if (explosionEffectPrefab != null)
+        {
+            Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
     }
 }
