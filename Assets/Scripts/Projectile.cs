@@ -7,7 +7,7 @@ public class Projectile : MonoBehaviour
     public int damage = 10;
     public float maxTravelDistance = 20f;
     private Vector3 startPosition;
-    public string shooterTag; // ✅ Store the shooter's tag (Player or Enemy)
+    public string shooterTag;
 
     public void SetShooterTag(string tag)
     {
@@ -31,7 +31,6 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // ✅ Player bullets should hit only enemies
         if (shooterTag == "Player" && other.CompareTag("Enemy"))
         {
             Enemy enemy = other.GetComponent<Enemy>();
@@ -40,24 +39,19 @@ public class Projectile : MonoBehaviour
                 enemy.TakeDamage(damage);
             }
 
-            Destroy(gameObject); // ✅ Destroy after hit
+            Destroy(gameObject);
         }
 
-        // ✅ Enemy bullets should hit only players
         if (shooterTag == "Enemy" && other.CompareTag("Player"))
         {
             PhotonView playerView = other.GetComponent<PhotonView>();
 
-            if (playerView != null && playerView.IsMine) // ✅ Only the local player takes damage
+            if (playerView != null)
             {
-                Player player = other.GetComponent<Player>();
-                if (player != null)
-                {
-                    player.TakeDamage(damage);
-                }
+                playerView.RPC("RPC_TakeDamage", playerView.Owner, damage);
             }
 
-            Destroy(gameObject); // ✅ Destroy after hit
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 }
