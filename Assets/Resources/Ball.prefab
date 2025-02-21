@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 8579762087676271010}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.4049, y: -0.8153, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.11, y: 0.11, z: 0.11}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -165,7 +165,7 @@ MonoBehaviour:
   speed: 5
   damage: 20
   maxTravelDistance: 10
-  explosionEffectPrefab: {fileID: 0}
+  shooterTag: 
 --- !u!114 &3479877778408390686
 MonoBehaviour:
   m_ObjectHideFlags: 0

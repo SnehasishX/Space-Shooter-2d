@@ -5,8 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - Boss
   - Bullet
+  - Crosshair
+  - UI
   layers:
   - Default
   - TransparentFX
