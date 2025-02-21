@@ -1,28 +1,29 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class EnemyShooting : MonoBehaviour
+public class EnemyShooting : MonoBehaviourPun
 {
-    public Transform firePoint; // Where the projectile spawns
-    public GameObject projectilePrefab; // Projectile to shoot
-    public float fireRate = 1.5f; // Time between shots
+    public Transform firePoint;
+    public GameObject projectilePrefab;
+    public float fireRate = 1.5f;
     private float nextFireTime = 0f;
 
     void Update()
     {
+        if (!PhotonNetwork.IsMasterClient) return; // 🔥 Only the Master Client shoots
+
         if (Time.time >= nextFireTime)
         {
-            Shoot();
+            photonView.RPC("Shoot", RpcTarget.All);
             nextFireTime = Time.time + fireRate;
         }
     }
 
+    [PunRPC]
     void Shoot()
     {
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
         Projectile projectileScript = projectile.GetComponent<Projectile>();
-        if (projectileScript != null)
-        {
-            projectileScript.SetShooter(gameObject); // Set shooter as the enemy
-        }
+        projectileScript?.SetShooter(gameObject);
     }
 }

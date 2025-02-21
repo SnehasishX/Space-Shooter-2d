@@ -323,10 +323,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40cdf707f2b118746aa296bdfce94ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
   moveSpeed: 2
   detectionRange: 20
-  fireRate: 1.5
+  changeTargetTime: 5
 --- !u!114 &8108461320710240405
 MonoBehaviour:
   m_ObjectHideFlags: 0

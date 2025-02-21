@@ -5,7 +5,6 @@ public class Enemy : MonoBehaviourPun
 {
     public int maxHealth = 50;
     private int health;
-
     public GameObject floatingDamagePrefab;
 
     void Start()
@@ -13,29 +12,21 @@ public class Enemy : MonoBehaviourPun
         health = maxHealth;
     }
 
-    [PunRPC] // Ensures damage syncs across the network
+    [PunRPC]
     public void TakeDamage(int damage)
     {
         ShowFloatingDamage(damage);
-
         health -= damage;
 
         if (health <= 0)
         {
-            if (PhotonNetwork.IsMasterClient) // Only Master Client destroys the enemy
+            if (PhotonNetwork.IsMasterClient)
             {
-                if (UIManager.Instance != null)
-                {
-                    UIManager.Instance.UpdateScore(10);
-                }
-
+                UIManager.Instance?.UpdateScore(10);
                 EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
-                if (spawner != null)
-                {
-                    spawner.RemoveEnemy(gameObject);
-                }
+                spawner?.RemoveEnemy(gameObject);
 
-                PhotonNetwork.Destroy(gameObject); // Destroy enemy for all players
+                PhotonNetwork.Destroy(gameObject); // 🔥 Network-safe destruction
             }
         }
     }
@@ -43,12 +34,17 @@ public class Enemy : MonoBehaviourPun
     void ShowFloatingDamage(int damage)
     {
         if (floatingDamagePrefab == null) return;
-
         GameObject damageText = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity);
         FloatingDamage floatingDamage = damageText.GetComponent<FloatingDamage>();
-        if (floatingDamage != null)
+        floatingDamage?.SetDamageText(damage);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bullet"))
         {
-            floatingDamage.SetDamageText(damage);
+            photonView.RPC("TakeDamage", RpcTarget.All, 10);
+            Destroy(collision.gameObject);
         }
     }
 }

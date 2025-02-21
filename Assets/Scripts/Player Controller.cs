@@ -4,19 +4,16 @@ using Photon.Pun;
 public class PlayerController : MonoBehaviour, IPunObservable
 {
     public float moveSpeed = 5f;
-    public float rotationSpeed = 200f; // 🔥 Adjust for smooth aiming
-    public Camera playerCamera;
-    // public GameObject crosshairPrefab; // 🔥 Custom crosshair
+    public Transform followTarget; // Optional target to follow (can be null)
+    public GameObject crosshairPrefab; // 🎯 Crosshair prefab
 
     private PhotonView photonView;
     private Rigidbody2D rb;
     private GameObject crosshair;
 
     private Vector2 networkPosition;
-    private float networkRotationZ;
+    private Vector2 networkCursorPosition;
     private float lerpSpeed = 10f;
-
-    private Vector3 mouseDelta; // 🔥 Smooth mouse movement tracking
 
     void Start()
     {
@@ -25,12 +22,8 @@ public class PlayerController : MonoBehaviour, IPunObservable
 
         if (photonView.IsMine)
         {
-            Cursor.visible = false; // 🔥 Hide the system cursor
-            // crosshair = Instantiate(crosshairPrefab); // Create crosshair
-        }
-        else
-        {
-            playerCamera.gameObject.SetActive(false);
+            Cursor.visible = false; // 🔥 Hide system cursor
+            crosshair = Instantiate(crosshairPrefab);
         }
     }
 
@@ -44,39 +37,55 @@ public class PlayerController : MonoBehaviour, IPunObservable
         }
         else
         {
+            // 🔥 Smooth movement & rotation interpolation for remote players
             transform.position = Vector2.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
-            Quaternion targetRotation = Quaternion.Euler(0, 0, networkRotationZ);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * lerpSpeed);
+
+            Vector2 direction = (networkCursorPosition - (Vector2)transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, angle), Time.deltaTime * lerpSpeed);
         }
     }
 
     void HandleMovement()
     {
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
-        Vector2 movement = new Vector2(moveX, moveY) * moveSpeed;
-        rb.velocity = movement;
+        if (followTarget != null)
+        {
+            // 🔥 Move towards the follow target smoothly
+            transform.position = Vector2.MoveTowards(transform.position, followTarget.position, moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // 🔥 Normal movement with WASD
+            float moveX = Input.GetAxis("Horizontal");
+            float moveY = Input.GetAxis("Vertical");
+            Vector2 movement = new Vector2(moveX, moveY) * moveSpeed;
+            rb.velocity = movement;
+        }
     }
 
     void HandleRotation()
     {
-        float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
+        if (!photonView.IsMine) return;
 
-        // 🔥 Smooth mouse movement using interpolation
-        mouseDelta = Vector3.Lerp(mouseDelta, new Vector3(mouseX, mouseY, 0), Time.deltaTime * 10f);
-        
-        float newRotationZ = transform.rotation.eulerAngles.z - mouseDelta.x;
-        transform.rotation = Quaternion.Euler(0, 0, newRotationZ);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0; // Ensure it's on the same 2D plane
+        networkCursorPosition = mousePos;
+
+        // 🔥 Rotate player towards the mouse
+        Vector2 direction = (mousePos - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     void UpdateCrosshair()
     {
         if (crosshair)
         {
-            Vector3 mousePos = playerCamera.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
-            crosshair.transform.position = mousePos;
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0; // Ensure it's on the same 2D plane
+
+            // 🎯 Move crosshair smoothly to the cursor position
+            crosshair.transform.position = Vector3.Lerp(crosshair.transform.position, mousePos, Time.deltaTime * 20f);
         }
     }
 
@@ -85,12 +94,12 @@ public class PlayerController : MonoBehaviour, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext((Vector2)transform.position);
-            stream.SendNext(transform.rotation.eulerAngles.z);
+            stream.SendNext((Vector2)networkCursorPosition);
         }
         else
         {
             networkPosition = (Vector2)stream.ReceiveNext();
-            networkRotationZ = (float)stream.ReceiveNext();
+            networkCursorPosition = (Vector2)stream.ReceiveNext();
         }
     }
 }
