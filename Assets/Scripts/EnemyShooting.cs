@@ -10,20 +10,25 @@ public class EnemyShooting : MonoBehaviourPun
 
     void Update()
     {
-        if (!PhotonNetwork.IsMasterClient) return; // 🔥 Only the Master Client shoots
+        if (!PhotonNetwork.IsMasterClient) return; // ✅ Only Master Client spawns bullets
 
         if (Time.time >= nextFireTime)
         {
-            photonView.RPC("Shoot", RpcTarget.All);
+            Shoot();
             nextFireTime = Time.time + fireRate;
         }
     }
 
-    [PunRPC]
     void Shoot()
     {
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        if (projectilePrefab == null) return;
+
+        GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, firePoint.position, firePoint.rotation);
+
         Projectile projectileScript = projectile.GetComponent<Projectile>();
-        projectileScript?.SetShooter(gameObject);
+        if (projectileScript != null)
+        {
+            projectileScript.SetShooterTag("Enemy"); // ✅ Assign shooter tag
+        }
     }
 }

@@ -6,17 +6,18 @@ public class PlayerShooting : MonoBehaviourPun
     public Transform firePoint;
     public GameObject[] projectilePrefabs;
     public int selectedProjectileIndex = 0;
-
     public float fireRate = 0.5f;
     private float nextFireTime = 0f;
 
+    public GameObject FloatingDmg; // ✅ Ensure this is assigned in the Inspector
+
     void Update()
     {
-        if (!photonView.IsMine) return; // Only the local player can shoot
+        if (!photonView.IsMine) return;
 
         if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
-            Shoot(); // Only the local player instantiates the bullet
+            Shoot();
             nextFireTime = Time.time + fireRate;
         }
 
@@ -33,14 +34,32 @@ public class PlayerShooting : MonoBehaviourPun
     {
         if (projectilePrefabs.Length > 0 && selectedProjectileIndex < projectilePrefabs.Length)
         {
-            // Only the shooter instantiates the bullet, and it is automatically synced
-            GameObject projectile = PhotonNetwork.Instantiate(projectilePrefabs[selectedProjectileIndex].name, firePoint.position, firePoint.rotation);
-            
+            GameObject projectile = PhotonNetwork.Instantiate(
+                projectilePrefabs[selectedProjectileIndex].name, 
+                firePoint.position, 
+                firePoint.rotation
+            );
+
             Projectile projectileScript = projectile.GetComponent<Projectile>();
             if (projectileScript != null)
             {
-                projectileScript.SetShooter(gameObject);
+                projectileScript.SetShooterTag("Player"); // ✅ Set shooter as Player
             }
+        }
+    }
+
+    // ✅ Ensure this method exists and is correctly marked as an RPC
+    [PunRPC]
+    public void ShowDamageText(Vector3 position, int damage)
+    {
+        if (FloatingDmg == null) return;
+
+        GameObject damageText = Instantiate(FloatingDmg, position, Quaternion.identity);
+        FloatingDamage floatingDamage = damageText.GetComponent<FloatingDamage>();
+
+        if (floatingDamage != null)
+        {
+            floatingDamage.SetDamageText(damage);
         }
     }
 }

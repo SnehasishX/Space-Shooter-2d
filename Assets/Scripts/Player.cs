@@ -1,8 +1,8 @@
 using UnityEngine;
 using Photon.Pun;
-using UnityEngine.SceneManagement; // 🔥 Needed for matchmaking
+using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviourPun
+public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     public int maxHealth = 100;
     private int health;
@@ -10,12 +10,21 @@ public class Player : MonoBehaviourPun
     void Start()
     {
         health = maxHealth;
-        UIManager.Instance?.UpdateHealth(health, maxHealth);
+
+        // ✅ Only update UI for the local player
+        if (photonView.IsMine)
+        {
+            UIManager.Instance?.UpdateHealth(health, maxHealth);
+        }
     }
 
     public void TakeDamage(int damage)
     {
+        if (!photonView.IsMine) return; // ✅ Only the local player processes damage
+
         health -= damage;
+
+        // ✅ Update only the local UI
         UIManager.Instance?.UpdateHealth(health, maxHealth);
 
         if (health <= 0)
@@ -26,16 +35,28 @@ public class Player : MonoBehaviourPun
 
     void Die()
     {
-        if (photonView.IsMine) // 🔥 Only the local player should handle their own death
-        {
-            // Check if any players are left
-            if (GameObject.FindGameObjectsWithTag("Player").Length <= 1)
-            {
-                PhotonNetwork.LeaveRoom();
-                SceneManager.LoadScene("MainMenu"); // 🔥 Replace with actual matchmaking scene name
-            }
+        if (!photonView.IsMine) return; // ✅ Prevent affecting other players
 
-            PhotonNetwork.Destroy(gameObject); // 🔥 Destroy this player object
+        photonView.RPC("ReturnToMainMenu", RpcTarget.All);
+        PhotonNetwork.Destroy(photonView);
+    }
+
+    [PunRPC]
+    void ReturnToMainMenu()
+    {
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene("MainMenu"); // 🔥 Make sure "MainMenu" is correct
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(health); // ✅ Sync health across the network
+        }
+        else
+        {
+            health = (int)stream.ReceiveNext();
         }
     }
 }

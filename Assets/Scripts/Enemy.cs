@@ -5,46 +5,48 @@ public class Enemy : MonoBehaviourPun
 {
     public int maxHealth = 50;
     private int health;
-    public GameObject floatingDamagePrefab;
 
     void Start()
     {
         health = maxHealth;
     }
 
-    [PunRPC]
     public void TakeDamage(int damage)
     {
-        ShowFloatingDamage(damage);
+        if (!PhotonNetwork.IsMasterClient) return; // ✅ Only Master Client modifies health
+
         health -= damage;
+
+        // ✅ Show floating damage text using RPC
+        photonView.RPC("ShowDamageText", RpcTarget.All, transform.position, damage);
 
         if (health <= 0)
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                UIManager.Instance?.UpdateScore(10);
-                EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
-                spawner?.RemoveEnemy(gameObject);
-
-                PhotonNetwork.Destroy(gameObject); // 🔥 Network-safe destruction
-            }
+            PhotonNetwork.Destroy(gameObject);
         }
-    }
-
-    void ShowFloatingDamage(int damage)
-    {
-        if (floatingDamagePrefab == null) return;
-        GameObject damageText = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity);
-        FloatingDamage floatingDamage = damageText.GetComponent<FloatingDamage>();
-        floatingDamage?.SetDamageText(damage);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Bullet"))
+        if (collision.CompareTag("Bullet")) // ✅ Ensure bullet has correct tag
         {
-            photonView.RPC("TakeDamage", RpcTarget.All, 10);
+            TakeDamage(10); // ✅ Apply damage properly
             Destroy(collision.gameObject);
+        }
+    }
+
+    [PunRPC]
+    void ShowDamageText(Vector3 position, int damage)
+    {
+        // ✅ Use RPC to call `ShowDamageText` on PlayerShooting
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            PhotonView playerView = player.GetComponent<PhotonView>();
+            if (playerView != null)
+            {
+                playerView.RPC("ShowDamageText", RpcTarget.All, position, damage);
+            }
         }
     }
 }
