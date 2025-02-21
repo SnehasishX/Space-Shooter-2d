@@ -5028,6 +5028,7 @@ MonoBehaviour:
   speed: 10
   damage: 50
   maxTravelDistance: 70
+  explosionEffectPrefab: {fileID: 0}
   shooterTag: 
 --- !u!114 &4686901712537796733
 MonoBehaviour:

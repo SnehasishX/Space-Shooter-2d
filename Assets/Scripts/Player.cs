@@ -11,20 +11,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         health = maxHealth;
 
-        // ✅ Only update UI for the local player
         if (photonView.IsMine)
         {
             UIManager.Instance?.UpdateHealth(health, maxHealth);
         }
     }
 
-    public void TakeDamage(int damage)
+    [PunRPC]
+    void RPC_TakeDamage(int damage)
     {
-        if (!photonView.IsMine) return; // ✅ Only the local player processes damage
-
         health -= damage;
-
-        // ✅ Update only the local UI
         UIManager.Instance?.UpdateHealth(health, maxHealth);
 
         if (health <= 0)
@@ -33,26 +29,38 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    public void TakeDamage(int damage)
+    {
+        if (photonView.IsMine)
+        {
+            photonView.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+        }
+    }
+
     void Die()
     {
-        if (!photonView.IsMine) return; // ✅ Prevent affecting other players
+        if (!photonView.IsMine) return;
 
-        photonView.RPC("ReturnToMainMenu", RpcTarget.All);
-        PhotonNetwork.Destroy(photonView);
+        photonView.RPC("RPC_PlayerDied", RpcTarget.AllBuffered, photonView.ViewID);
     }
 
     [PunRPC]
-    void ReturnToMainMenu()
+    void RPC_PlayerDied(int viewID)
     {
-        PhotonNetwork.LeaveRoom();
-        SceneManager.LoadScene("MainMenu"); // 🔥 Make sure "MainMenu" is correct
+        PhotonView pv = PhotonView.Find(viewID);
+        if (pv != null) PhotonNetwork.Destroy(pv.gameObject);
+
+        if (photonView.IsMine)
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(health); // ✅ Sync health across the network
+            stream.SendNext(health);
         }
         else
         {

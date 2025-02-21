@@ -5,7 +5,7 @@ public class Enemy : MonoBehaviourPun
 {
     public int maxHealth = 50;
     private int health;
-    public int scoreValue = 10; // ✅ Score given when enemy is destroyed
+    public int scoreValue = 10;
 
     void Start()
     {
@@ -14,32 +14,28 @@ public class Enemy : MonoBehaviourPun
 
     public void TakeDamage(int damage)
     {
-        if (!PhotonNetwork.IsMasterClient) return; // ✅ Only Master Client modifies health
+        photonView.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
 
+    [PunRPC]
+    void RPC_TakeDamage(int damage)
+    {
         health -= damage;
 
-        // ✅ Show floating damage text using UIManager
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.photonView.RPC("ShowDamageText", RpcTarget.All, transform.position, damage);
+            UIManager.Instance.photonView.RPC("ShowEnemyDamageText", RpcTarget.All, transform.position, damage);
+        }
+        else
+        {
+            Debug.LogError("❌ UIManager instance not found!");
         }
 
         if (health <= 0)
         {
-            // ✅ Increase the player's score
             UIManager.Instance?.AddScore(scoreValue);
-
-            // ✅ Destroy the enemy across all clients
             PhotonNetwork.Destroy(gameObject);
         }
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Bullet")) // ✅ Ensure bullet has correct tag
-        {
-            TakeDamage(10); // ✅ Apply damage properly
-            Destroy(collision.gameObject);
-        }
-    }
 }
