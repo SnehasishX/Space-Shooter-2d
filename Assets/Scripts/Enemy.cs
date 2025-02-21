@@ -5,6 +5,7 @@ public class Enemy : MonoBehaviourPun
 {
     public int maxHealth = 50;
     private int health;
+    public int scoreValue = 10; // ✅ Score given when enemy is destroyed
 
     void Start()
     {
@@ -17,11 +18,18 @@ public class Enemy : MonoBehaviourPun
 
         health -= damage;
 
-        // ✅ Show floating damage text using RPC
-        photonView.RPC("ShowDamageText", RpcTarget.All, transform.position, damage);
+        // ✅ Show floating damage text using UIManager
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.photonView.RPC("ShowDamageText", RpcTarget.All, transform.position, damage);
+        }
 
         if (health <= 0)
         {
+            // ✅ Increase the player's score
+            UIManager.Instance?.AddScore(scoreValue);
+
+            // ✅ Destroy the enemy across all clients
             PhotonNetwork.Destroy(gameObject);
         }
     }
@@ -32,21 +40,6 @@ public class Enemy : MonoBehaviourPun
         {
             TakeDamage(10); // ✅ Apply damage properly
             Destroy(collision.gameObject);
-        }
-    }
-
-    [PunRPC]
-    void ShowDamageText(Vector3 position, int damage)
-    {
-        // ✅ Use RPC to call `ShowDamageText` on PlayerShooting
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            PhotonView playerView = player.GetComponent<PhotonView>();
-            if (playerView != null)
-            {
-                playerView.RPC("ShowDamageText", RpcTarget.All, position, damage);
-            }
         }
     }
 }

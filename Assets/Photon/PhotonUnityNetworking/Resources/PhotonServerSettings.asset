@@ -46,6 +46,12 @@ MonoBehaviour:
   - SyncMovement
   - SyncRotation
   - SyncPosition
+  - RequestDestroy
+  - RequestDamage
+  - ReturnToMatchmaking
+  - ReturnToMainMenu
+  - ShowDamageText
+  - UpdateScore
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

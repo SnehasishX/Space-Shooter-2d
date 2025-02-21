@@ -178,7 +178,7 @@ MonoBehaviour:
   speed: 20
   damage: 7
   maxTravelDistance: 15
-  explosionEffectPrefab: {fileID: 0}
+  shooterTag: 
 --- !u!114 &7691527292533098403
 MonoBehaviour:
   m_ObjectHideFlags: 0

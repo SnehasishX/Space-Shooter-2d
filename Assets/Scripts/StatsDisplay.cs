@@ -27,8 +27,8 @@ public class StatsDisplay : MonoBehaviour
         while (true)
         {
             // Get the player's ping (Replace with your multiplayer system if needed)
-            int ping = PhotonNetwork.GetPing(); // Simulating ping (Replace with actual ping system)
-            pingText.text = $"Ping: {ping}ms";
+            // int ping = PhotonNetwork.GetPing(); // Simulating ping (Replace with actual ping system)
+            // pingText.text = $"Ping: {ping}ms";
 
             yield return new WaitForSeconds(1f); // Update every second
         }
