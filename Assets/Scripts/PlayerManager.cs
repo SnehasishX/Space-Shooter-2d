@@ -1,10 +1,11 @@
 using Photon.Pun;
-using Photon.Realtime;
+using Photon.Realtime; // ✅ Ensure correct namespace is used
 using UnityEngine;
+using System.Collections;
 
 public class PlayerManager : MonoBehaviourPunCallbacks
 {
-    public GameObject playerPrefab; // Reference to the player prefab (must be in Resources folder)
+    public GameObject playerPrefab;
 
     private void Start()
     {
@@ -40,13 +41,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (!IsPrefabInResources("Player"))
-        {
-            Debug.LogError("❌ ERROR: Player prefab not found in Resources! Move the prefab to 'Assets/Resources/'.");
-            return;
-        }
-
-        Vector3 spawnPosition = GetRandomSpawnPosition();
+        Vector3 spawnPosition = GetSafeSpawnPosition();
         GameObject player = PhotonNetwork.Instantiate("Player", spawnPosition, Quaternion.identity);
 
         if (player == null)
@@ -56,42 +51,37 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         }
 
         Debug.Log("✅ Player instantiated successfully at: " + spawnPosition);
-
-        PhotonView playerPhotonView = player.GetComponent<PhotonView>();
-        if (playerPhotonView == null)
-        {
-            Debug.LogError("❌ ERROR: PhotonView component missing on the Player prefab.");
-            return;
-        }
-
-        StartCoroutine(AssignNicknameDelayed(playerPhotonView));
     }
 
-    private System.Collections.IEnumerator AssignNicknameDelayed(PhotonView playerPhotonView)
-    {
-        yield return new WaitForSeconds(0.1f);
-
-        if (playerPhotonView.Owner != null)
-        {
-            playerPhotonView.Owner.NickName = PhotonNetwork.NickName;
-            Debug.Log("✅ Player assigned nickname: " + playerPhotonView.Owner.NickName);
-        }
-        else
-        {
-            Debug.LogError("❌ ERROR: Owner is still null after delay, cannot assign NickName.");
-        }
-    }
-
-    private Vector3 GetRandomSpawnPosition()
+    private Vector3 GetSafeSpawnPosition()
     {
         float x = Random.Range(-5f, 5f);
         float y = Random.Range(-5f, 5f);
         return new Vector3(x, y, 0);
     }
 
-    private bool IsPrefabInResources(string prefabName)
+    // ✅ FIX: Explicitly use `Photon.Realtime.Player` to avoid conflicts
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
     {
-        GameObject prefab = Resources.Load<GameObject>(prefabName);
-        return prefab != null;
+        if (newMasterClient == null)
+        {
+            Debug.LogError("❌ ERROR: newMasterClient is NULL! Cannot transfer ownership.");
+            return;
+        }
+
+        Debug.Log($"🔥 MasterClient switched! New Master: {newMasterClient.NickName}");
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            {
+                PhotonView enemyView = enemy.GetComponent<PhotonView>();
+                if (enemyView != null && !enemyView.IsMine)
+                {
+                    enemyView.TransferOwnership(newMasterClient);
+                    Debug.Log($"✅ Transferred enemy {enemyView.ViewID} to {newMasterClient.NickName}");
+                }
+            }
+        }
     }
 }
